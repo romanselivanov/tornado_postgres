@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "tornado-demo"
+version = "0.1.0"
+description = "tornado-demo"
+authors = ["rselivanov <rselivanov@list.ru>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+tornado = "^6.1"
+tornado-sqlalchemy = "^0.7.0"
+psycopg2 = "^2.9.3"
+
+[tool.poetry.dev-dependencies]
+python-dotenv = "^0.19.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
