@@ -4,7 +4,8 @@ from tornado import ioloop, web
 from routers.views import (
     AddBodyView, GetBodyView, RemoveBodyView, UpdateBodyView, GetApiStatisticView
 )
-from crud.database import db, Base, db_engine, db_session
+from crud.database import db, Base, db_engine
+from tornado_swagger.setup import setup_swagger
 
 define(
     "port", default=8000,
@@ -17,27 +18,34 @@ define(
 )
 
 
-class MainApplication(web.Application):
-    """ Storing some sqlalchemy session information in the application """
+class Application(web.Application):
+    _routes = [
+        web.url(r"/api/add", AddBodyView),
+        web.url(r"/api/get", GetBodyView),
+        web.url(r"/api/remove/(.*?)", RemoveBodyView),
+        web.url(r"/api/update/(.*?)", UpdateBodyView),
+        web.url(r"/api/statistic", GetApiStatisticView),
+    ]
+
     def __init__(self, *args, **kwargs):
-        """ setup the session to engine linkage in the initialization """
-        self.session = kwargs.pop('session')
-        self.session.configure(bind=db_engine)
-        super(MainApplication, self).__init__(*args, **kwargs)
+        setup_swagger(
+            self._routes,
+            swagger_url="/doc",
+            api_base_url="/",
+            description="",
+            api_version="1.0.0",
+            title="Demo API",
+            contact="admin@mail.ru",
+            schemes=["http"],
+        )
+        super(Application, self).__init__(self._routes, *args, **kwargs)
 
     def create_database(self):
         """ this will create a database """
         Base.metadata.create_all(db_engine)
 
 
-application = MainApplication([
-    (r"/api/add/?", AddBodyView),
-    (r"/api/get/?", GetBodyView),
-    (r"/api/remove/(.*?)", RemoveBodyView),
-    (r"/api/update/(.*?)", UpdateBodyView),
-    (r"/api/statistic/?", GetApiStatisticView),
-], db=db, session=db_session)
-
+application = Application(db=db)
 
 if __name__ == "__main__":
     application.create_database()

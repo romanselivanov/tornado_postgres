@@ -10,6 +10,7 @@ python = "^3.8"
 tornado = "^6.1"
 tornado-sqlalchemy = "^0.7.0"
 psycopg2 = "^2.9.3"
+tornado-swagger = "^1.4.1"
 
 [tool.poetry.dev-dependencies]
 python-dotenv = "^0.19.2"
